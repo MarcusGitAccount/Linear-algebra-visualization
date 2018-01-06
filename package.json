@@ -1,0 +1,25 @@
+{
+  "name": "algebra_visualisation",
+  "version": "1.0.0",
+  "description": "Visualising basic operations in space",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "keywords": [
+    "Algbra",
+    "Vectors",
+    "Space",
+    "Matrices",
+    "Transformations"
+  ],
+  "author": "Marcus Pop",
+  "license": "GPLV3",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "express": "^4.16.2",
+    "morgan": "^1.9.0",
+    "serve-favicon": "^2.4.5"
+  }
+}
