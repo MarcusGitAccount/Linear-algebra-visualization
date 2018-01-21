@@ -85,3 +85,40 @@ export function areEqual(a, b) {
 
   return true;
 }
+
+function printMatrix(matrix) {
+  for (const row of matrix)
+    console.log(...row);
+  console.log('');
+}
+
+export function det(matrix, size) {
+  let first, value, col;
+
+  console.log(matrix);
+  printMatrix(matrix);
+  if (size == 1)
+    return matrix[0][matrix.length - 1];
+
+  first = 0;
+  col   = matrix.length - 1 - size;
+  while (matrix[first][col] == 0 && first < matrix.length)
+    first++;
+
+  // matrix has a column of zeroes
+  if (matrix[first][0] == 0)
+    return 0;
+
+  value = matrix[first][col]; 
+  for (let i = first + 1; i < matrix.length; i++) {
+    if (matrix[i][col] != 0) {
+      // make zeroes on the line
+      const scalar = matrix[i][col] / value;
+
+      matrix[i] = add(matrix[i], multiply(matrix[first], -scalar));
+    }
+  }
+
+  matrix.slice(first, first + 1);
+  return value * (first % 2 == 1 ? 1 : -1) * det(matrix, size - 1);
+}
