@@ -34,9 +34,7 @@ export default class Snake {
     };
 
     this.context.font = "20px Arial";
-
     this.startingLength = startingLength;
-    this.prevStroke = 39;
     this.requestId = null;
     this.fps = fps;
     this.timeout = null;
@@ -90,6 +88,7 @@ export default class Snake {
   }
 
   init(length = 5) {
+    this.prevStroke = 39
     this.head = this.center;
     this.tail = [];
     this.direction = [this.tile, 0];
@@ -127,7 +126,6 @@ export default class Snake {
   animation(timestamp) {
     if (this.checkCollision() == true) {
       window.cancelAnimationFrame(this.requestId);
-      window.clearTimeout(this.timeout);
       this.init(this.startingLength);
       return ;
     }
