@@ -29,9 +29,13 @@ export default class Snake {
         body: '#4caf50',
         head: '#d50000'
       },
+      score: '#f50057',
       background: '#fff'
     };
 
+    this.context.font = "20px Arial";
+
+    this.startingLength = startingLength;
     this.prevStroke = 39;
     this.requestId = null;
     this.fps = fps;
@@ -65,13 +69,23 @@ export default class Snake {
     this.context.closePath();
   }
 
+  snakeAndAppleCollision(apple) {
+    if (areEqual(apple, this.head))
+      return true;
+    for (const piece of this.tail)
+      if (areEqual(piece, apple))
+        return true;
+    return false;
+  }
+
   getApple() {
     const position = [0, 0];
 
-    position[0] = (Math.random() * this.scene.width  / this.tile | 0) * this.tile;
-    position[1] = (Math.random() * this.scene.height / this.tile | 0) * this.tile;
+    do {
+      position[0] = (Math.random() * (this.scene.width -  2) / this.tile | 0 + 1) * this.tile;
+      position[1] = (Math.random() * (this.scene.height - 2) / this.tile | 0 + 1  ) * this.tile;
+    } while (this.snakeAndAppleCollision(position) == true);
 
-    console.log('Apple: ', position);
     return position;
   }
 
@@ -81,18 +95,10 @@ export default class Snake {
     this.direction = [this.tile, 0];
     this.apple = this.getApple();
 
-    for (let i = 1; i <= length; i++) {
+    for (let i = 1; i <= length; i++)
       this.tail.push([this.center[0] - i * this.tile, this.center[1]]);
-    }
 
-    if (this.requestId) {
-      window.cancelAnimationFrame(this.requestId);
-      window.clearTimeout(this.timeout);
-      this.requestId = null;
-      this.timeout = null;
-    }
-
-    window.requestAnimationFrame(this.animation.bind(this));
+    this.requestId = window.requestAnimationFrame(this.animation.bind(this));
   }
 
   draw() {
@@ -100,6 +106,11 @@ export default class Snake {
     for (const position of this.tail)
       this.square(position, this.colors.snake.body, this.tile, true);
     this.square(this.apple, this.colors.apple, this.tile);
+
+    this.context.beginPath();
+    this.context.fillStyle = this.colors.score;
+    this.context.fillText(`Score: ${this.tail.length - this.startingLength}`, 5, 25);
+    this.context.closePath();
   }
 
   clearScene() {
@@ -115,7 +126,9 @@ export default class Snake {
 
   animation(timestamp) {
     if (this.checkCollision() == true) {
-      this.init();
+      window.cancelAnimationFrame(this.requestId);
+      window.clearTimeout(this.timeout);
+      this.init(this.startingLength);
       return ;
     }
     
@@ -126,20 +139,20 @@ export default class Snake {
 
     this.clearScene();
     this.draw();
-    for (let i = this.tail.length - 1; i > 0; i--) {
+    for (let i = this.tail.length - 1; i > 0; i--)
       this.tail[i] = copy(this.tail[i - 1]);
-    }
+
     this.tail[0] = copy(this.head);
     this.head = add(this.head, this.direction);
 
     if (this.head[0] == 0)
       this.head[0] = this.scene.width;
-    else if (this.head[0] == this.scene.width)
+    else if (this.head[0] > this.scene.width)
       this.head[0] = 0;
   
-    if (this.head[1] == 0)
-      this.head[1] = this.scene.height;
-    else if (this.head[1] == this.scene.height)
+    if (this.head[1] < 0) 
+      this.head[1] = this.scene.height - this.tile;
+    else if (this.head[1] >= this.scene.height)
       this.head[1] = 0;
 
     this.timeout = setTimeout(() => {

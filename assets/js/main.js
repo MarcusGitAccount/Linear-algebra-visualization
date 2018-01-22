@@ -12,7 +12,7 @@ const options = {
   }
 };
 
-const game = new Snake(canvas, {height: 720, width: 1200, tile: 15}, null, 10, 5);
+const game = new Snake(canvas, {height: 720, width: 1200, tile: 60}, null, 10, 5);
 
 
 // plan.init();
